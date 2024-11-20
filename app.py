@@ -40,6 +40,7 @@ def update_task(id_task):
     for t in tasks:
         if t.id == id_task:
             task = t
+            break
 
 # aqui caso eu não queira usar o 'task = None', eu posso usar uma expressão geradora
 # com o next(), Ex: task = next((t for t in tasks if t.id == id_task), None)
@@ -63,6 +64,17 @@ def update_task(id_task):
     task.completed = data['completed']
     print(task)
     return jsonify({'message': 'Tarefa atualizada com sucesso.'})
+
+@app.route('/tasks/<int:id_task>', methods=['DELETE'])
+def delete_task(id_task):
+    # aqui está o exemplo de como eu poderia ter escrito no metodo PUT
+    task = next((t for t in tasks if t.id == id_task), None)
+
+    if task is None:
+        return jsonify({'message': 'Nenuma tarefa correspondente foi encontrada.'}), 404
+
+    tasks.remove(task)
+    return jsonify({'message': 'Tarefa deletada com sucesso!😊'})
 
 if __name__ == '__main__':
     app.run(debug=True)
