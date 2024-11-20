@@ -34,5 +34,35 @@ def get_single_task(id_task):
             return jsonify(t.to_dict())
     return jsonify({'message': 'Nenhuma tarefa correspondente foi encontrada.'}), 404
 
+@app.route('/tasks/<int:id_task>', methods=["PUT"])
+def update_task(id_task):
+    task = None
+    for t in tasks:
+        if t.id == id_task:
+            task = t
+
+# aqui caso eu não queira usar o 'task = None', eu posso usar uma expressão geradora
+# com o next(), Ex: task = next((t for t in tasks if t.id == id_task), None)
+# Essa é uma expressão geradora que percorre a lista tasks.
+# Para cada item t em tasks, verifica se a condição t.id == id_task é verdadeira.
+# Se encontrar um objeto que satisfaça a condição, ele "produz" esse objeto e para a execução.
+# Por exemplo:
+# Se tasks = [task1, task2, task3] e id_task = 2, a expressão geradora retornará o objeto task2 (se
+# task2.id == 2).
+# next() tenta obter o primeiro valor gerado pela expressão geradora.
+# Se a expressão geradora não produzir nenhum valor (ou seja, se nenhum objeto satisfizer a condição
+# t.id == id_task), next retorna o valor padrão fornecido como segundo argumento (None).
+
+    print(task)
+    if task is None:
+        return jsonify({'message': 'Nenhuma tarefa correspondente foi encontrada.'}), 404
+
+    data = request.get_json()
+    task.title = data['title']
+    task.description = data['description']
+    task.completed = data['completed']
+    print(task)
+    return jsonify({'message': 'Tarefa atualizada com sucesso.'})
+
 if __name__ == '__main__':
     app.run(debug=True)
