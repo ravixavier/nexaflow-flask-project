@@ -1,7 +1,6 @@
 import pytest
 import requests
 
-
 # CRUD
 BASE_URL = 'http://127.0.0.1:5000'
 tasks = []
@@ -9,7 +8,7 @@ tasks = []
 def test_create_task():
     new_task_data = {
         'title': 'Título da tarefa',
-        'description': 'Descrição da nova tarefa'
+        'description': 'Descrição da tarefa'
     }
 
     response = requests.post(f"{BASE_URL}/tasks", json=new_task_data)
@@ -34,4 +33,21 @@ def test_get_single_task():
         response_json = response.json()
         assert task_id == response_json['id']
 
-
+def test_update_task():
+    if tasks:
+        task_id = tasks[0]
+        payload = {
+            'completed': False,
+            'description': 'Nova descricao',
+            'title': 'Novo Titulo'
+        }
+        response = requests.put(f'{BASE_URL}/tasks/{task_id}', json=payload)
+        assert response.status_code == 200
+        response_json = response.json()
+        assert 'message' in response_json
+        response = requests.get(f'{BASE_URL}/tasks/{task_id}')
+        assert response.status_code == 200
+        response_json = response.json()
+        assert response_json['title'] == payload['title']
+        assert response_json['description'] == payload['description']
+        assert response_json['completed'] == payload['completed']
